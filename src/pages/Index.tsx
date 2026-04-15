@@ -7,8 +7,9 @@ import RecordDetails from "@/components/RecordDetails";
 import PaymentAndUpload from "@/components/PaymentAndUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
+import { MapPin, Download } from "lucide-react";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 
