@@ -90,6 +90,38 @@ const Index = () => {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
+  const downloadExcel = useCallback(async () => {
+    if (records.length === 0) {
+      toast.error("No records to download");
+      return;
+    }
+
+    // If filters are active, fetch ALL matching records (not just 100)
+    let dataToExport = records;
+    const keys = Object.keys(filters);
+    if (keys.length > 0) {
+      toast.info("Fetching all matching records…");
+      let query = supabase.from(TABLE_NAME).select("*");
+      keys.forEach((key) => {
+        const values = filters[key];
+        if (values.length === 1) query = query.eq(key, values[0]);
+        else query = query.in(key, values);
+      });
+      const { data, error } = await query;
+      if (error) {
+        toast.error("Download failed: " + error.message);
+        return;
+      }
+      dataToExport = data || [];
+    }
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Arrears");
+    XLSX.writeFile(wb, "PESCO_Arrears_Data.xlsx");
+    toast.success(`Downloaded ${dataToExport.length} records`);
+  }, [records, filters]);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-10">
