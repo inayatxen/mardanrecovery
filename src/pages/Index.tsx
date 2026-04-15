@@ -147,6 +147,10 @@ const Index = () => {
           <CardContent className="pt-4 pb-3 space-y-3">
             <SearchBar onSearch={handleSearch} loading={loading} />
             <FilterBar filters={filters} onFiltersChange={handleFilterChange} />
+            <Button variant="outline" size="sm" onClick={downloadExcel} className="w-full h-8 text-xs">
+              <Download className="mr-1 h-3.5 w-3.5" />
+              Download All Records (Excel)
+            </Button>
           </CardContent>
         </Card>
 
