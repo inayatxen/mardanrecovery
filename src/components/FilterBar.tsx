@@ -32,11 +32,22 @@ const FilterBar = ({ filters, onFiltersChange }: FilterBarProps) => {
         filterColumns.map(async (col) => {
           // Use quoted column name for columns with spaces
           const quotedKey = col.key.includes(" ") ? `"${col.key}"` : col.key;
-          const { data } = await supabase
-            .from(TABLE_NAME)
-            .select(quotedKey)
-            .not(col.key, "is", null)
-            .limit(1000);
+          // Fetch all rows to get complete unique values
+          let allData: any[] = [];
+          let from = 0;
+          const pageSize = 1000;
+          while (true) {
+            const { data: page } = await supabase
+              .from(TABLE_NAME)
+              .select(quotedKey)
+              .not(col.key, "is", null)
+              .range(from, from + pageSize - 1);
+            if (!page || page.length === 0) break;
+            allData = allData.concat(page);
+            if (page.length < pageSize) break;
+            from += pageSize;
+          }
+          const data = allData;
 
           if (data) {
             const unique = [
