@@ -7,8 +7,9 @@ import RecordDetails from "@/components/RecordDetails";
 import PaymentAndUpload from "@/components/PaymentAndUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
+import { MapPin, Download } from "lucide-react";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 
@@ -89,6 +90,38 @@ const Index = () => {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
+  const downloadExcel = useCallback(async () => {
+    if (records.length === 0) {
+      toast.error("No records to download");
+      return;
+    }
+
+    // If filters are active, fetch ALL matching records (not just 100)
+    let dataToExport = records;
+    const keys = Object.keys(filters);
+    if (keys.length > 0) {
+      toast.info("Fetching all matching records…");
+      let query = supabase.from(TABLE_NAME).select("*");
+      keys.forEach((key) => {
+        const values = filters[key];
+        if (values.length === 1) query = query.eq(key, values[0]);
+        else query = query.in(key, values);
+      });
+      const { data, error } = await query;
+      if (error) {
+        toast.error("Download failed: " + error.message);
+        return;
+      }
+      dataToExport = data || [];
+    }
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Arrears");
+    XLSX.writeFile(wb, "PESCO_Arrears_Data.xlsx");
+    toast.success(`Downloaded ${dataToExport.length} records`);
+  }, [records, filters]);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-10">
@@ -114,9 +147,15 @@ const Index = () => {
         {records.length > 1 && !selectedRecord && (
           <Card>
             <CardHeader className="pb-2 px-4 pt-4">
-              <CardTitle className="text-sm">
-                Results ({records.length})
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">
+                  Results ({records.length})
+                </CardTitle>
+                <Button variant="outline" size="sm" onClick={downloadExcel} className="h-8 text-xs">
+                  <Download className="mr-1 h-3.5 w-3.5" />
+                  Download Excel
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="px-4 pb-4">
               <div className="space-y-1.5 max-h-60 overflow-y-auto">
