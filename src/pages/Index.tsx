@@ -8,6 +8,7 @@ import PaymentAndUpload from "@/components/PaymentAndUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Download } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 import ModifiedDataDownload from "@/components/ModifiedDataDownload";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
@@ -132,7 +133,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="px-4 py-3 flex flex-col items-center text-center">
+        <div className="px-4 py-3 flex flex-col items-center text-center relative">
+          <div className="absolute right-3 top-3">
+            <ThemeToggle />
+          </div>
           <img src={pescoLogo} alt="PESCO Logo" className="h-12 w-12 rounded-full object-contain mb-1" />
           <h1 className="text-lg font-bold text-foreground">
             PESCO MARDAN CIRCLE ARREARS
