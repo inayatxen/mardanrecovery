@@ -23,6 +23,9 @@ const SearchBar = ({ onSearch, loading }: SearchBarProps) => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="flex-1"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
       />
       <Button type="submit" disabled={loading}>
         <Search className="mr-2 h-4 w-4" />
