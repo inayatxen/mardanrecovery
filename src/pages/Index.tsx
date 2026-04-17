@@ -133,7 +133,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       <header className="header-gradient sticky top-0 z-10 shadow-lg">
-        <div className="px-4 py-4 flex flex-col items-center text-center relative">
+        <div className="px-4 py-4 flex flex-col items-center text-center relative max-w-2xl mx-auto">
           <div className="absolute right-3 top-3 flex items-center">
             <ThemeToggle />
           </div>
