@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Download } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import ModifiedDataDownload from "@/components/ModifiedDataDownload";
+import SummaryDialog from "@/components/SummaryDialog";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
@@ -175,6 +176,7 @@ const Index = () => {
               <Download className="mr-1 h-3.5 w-3.5" />
               Download Selected Arrears Lists (Excel)
             </Button>
+            <SummaryDialog />
           </CardContent>
         </Card>
 
