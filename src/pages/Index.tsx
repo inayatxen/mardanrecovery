@@ -63,9 +63,26 @@ const Index = () => {
         query = query.in(key, values);
       }
     });
-    query = query.limit(100);
-
-    const { data, error } = await query;
+    // Fetch all matching records in pages of 1000
+    const pageSize = 1000;
+    let allData: Record<string, any>[] = [];
+    let from = 0;
+    let error: any = null;
+    while (true) {
+      let pageQuery = supabase.from(TABLE_NAME).select("*").range(from, from + pageSize - 1);
+      keys.forEach((key) => {
+        const values = newFilters[key];
+        if (values.length === 1) pageQuery = pageQuery.eq(key, values[0]);
+        else pageQuery = pageQuery.in(key, values);
+      });
+      const { data: page, error: pageErr } = await pageQuery;
+      if (pageErr) { error = pageErr; break; }
+      if (!page || page.length === 0) break;
+      allData = allData.concat(page);
+      if (page.length < pageSize) break;
+      from += pageSize;
+    }
+    const data = allData;
     if (error) {
       toast.error("Filter failed: " + error.message);
     } else {
@@ -184,17 +201,31 @@ const Index = () => {
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-4">
-              <div className="space-y-1.5 max-h-60 overflow-y-auto">
-                {records.map((r, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedRecord(r)}
-                    className="w-full text-left px-3 py-2 rounded-lg text-xs bg-accent/50 hover:bg-primary/10 hover:shadow-sm transition-all flex justify-between items-center border border-transparent hover:border-primary/20"
-                  >
-                    <span className="font-medium text-foreground">{r.Reference}</span>
-                    <span className="text-muted-foreground truncate ml-2">{r.Name}</span>
-                  </button>
-                ))}
+              <div className="max-h-96 overflow-auto rounded-md border border-border">
+                <table className="w-full text-xs">
+                  <thead className="bg-muted/70 sticky top-0">
+                    <tr className="text-left">
+                      <th className="px-2 py-1.5 font-semibold text-foreground">Reference</th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground">Name</th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground text-right">Arrear</th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground text-right">Age</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {records.map((r, i) => (
+                      <tr
+                        key={i}
+                        onClick={() => setSelectedRecord(r)}
+                        className="cursor-pointer border-t border-border hover:bg-primary/10 transition-colors"
+                      >
+                        <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
+                        <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
+                        <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r.ARREAR ?? "—"}</td>
+                        <td className="px-2 py-1.5 text-muted-foreground text-right whitespace-nowrap">{r.AGE ?? "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
