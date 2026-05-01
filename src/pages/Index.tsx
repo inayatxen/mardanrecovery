@@ -113,6 +113,36 @@ const Index = () => {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
+  const displayModified = useCallback(async () => {
+    setLoading(true);
+    setRecords([]);
+    setSelectedRecord(null);
+    const pageSize = 1000;
+    let allData: Record<string, any>[] = [];
+    let from = 0;
+    while (true) {
+      const { data, error } = await supabase
+        .from(TABLE_NAME)
+        .select("*")
+        .not("payment", "is", null)
+        .neq("payment", "")
+        .range(from, from + pageSize - 1);
+      if (error) {
+        toast.error("Fetch failed: " + error.message);
+        setLoading(false);
+        return;
+      }
+      if (!data || data.length === 0) break;
+      allData = allData.concat(data);
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+    setRecords(allData);
+    if (allData.length === 0) toast.info("No recovery cases found");
+    else toast.success(`Found ${allData.length} recovery cases`);
+    setLoading(false);
+  }, []);
+
   const downloadExcel = useCallback(async () => {
     toast.info("Fetching all records…");
 
