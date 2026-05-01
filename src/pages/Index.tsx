@@ -113,7 +113,7 @@ const Index = () => {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
-  const displayModified = useCallback(async () => {
+  const displayByColumn = useCallback(async (column: string, label: string) => {
     setLoading(true);
     setRecords([]);
     setSelectedRecord(null);
@@ -124,8 +124,8 @@ const Index = () => {
       const { data, error } = await supabase
         .from(TABLE_NAME)
         .select("*")
-        .not("payment", "is", null)
-        .neq("payment", "")
+        .not(column, "is", null)
+        .neq(column, "")
         .range(from, from + pageSize - 1);
       if (error) {
         toast.error("Fetch failed: " + error.message);
@@ -138,10 +138,13 @@ const Index = () => {
       from += pageSize;
     }
     setRecords(allData);
-    if (allData.length === 0) toast.info("No recovery cases found");
-    else toast.success(`Found ${allData.length} recovery cases`);
+    if (allData.length === 0) toast.info(`No ${label} found`);
+    else toast.success(`Found ${allData.length} ${label}`);
     setLoading(false);
   }, []);
+
+  const displayModified = useCallback(() => displayByColumn("payment", "recovery cases"), [displayByColumn]);
+  const displayTheft = useCallback(() => displayByColumn("Reporting Date", "theft cases"), [displayByColumn]);
 
   const downloadExcel = useCallback(async () => {
     toast.info("Fetching all records…");
