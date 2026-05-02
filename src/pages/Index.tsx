@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import pescoLogo from "@/assets/pesco-logo.png";
 import { supabase } from "@/lib/supabase";
 import SearchBar from "@/components/SearchBar";
@@ -7,7 +7,7 @@ import RecordDetails from "@/components/RecordDetails";
 import PaymentAndUpload from "@/components/PaymentAndUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Download, ArrowLeft } from "lucide-react";
+import { MapPin, Download, ArrowLeft, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import ModifiedDataDownload from "@/components/ModifiedDataDownload";
 import SummaryDialog from "@/components/SummaryDialog";
