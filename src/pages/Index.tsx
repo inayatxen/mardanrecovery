@@ -340,12 +340,10 @@ const Index = () => {
                     <tr className="text-left">
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reference")}>Reference<SortIcon col="Reference" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Name")}>Name<SortIcon col="Name" /></th>
-                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Father")}>Father<SortIcon col="Father" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("ARREAR")}>Arrear<SortIcon col="ARREAR" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("AGE")}>Age<SortIcon col="AGE" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("payment")}>Payment<SortIcon col="payment" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Payment_Date")}>Payment Date<SortIcon col="Payment_Date" /></th>
-                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("payment mode")}>Payment Mode<SortIcon col="payment mode" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground">Picture</th>
                     </tr>
                   </thead>
@@ -359,13 +357,11 @@ const Index = () => {
                           className="cursor-pointer border-t border-border hover:bg-primary/10 transition-colors"
                         >
                           <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
-                          <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[120px]">{r.Name ?? "—"}</td>
-                          <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[120px]">{r.Father ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
                           <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r.ARREAR ?? "—"}</td>
                           <td className="px-2 py-1.5 text-muted-foreground text-right whitespace-nowrap">{r.AGE ?? "—"}</td>
                           <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r.payment ?? "—"}</td>
                           <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r.Payment_Date ?? "—"}</td>
-                          <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r["payment mode"] ?? "—"}</td>
                           <td className="px-2 py-1.5" onClick={(e) => e.stopPropagation()}>
                             {picUrl ? (
                               <a href={picUrl} target="_blank" rel="noopener noreferrer">
@@ -397,23 +393,43 @@ const Index = () => {
                     <tr className="text-left">
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reference")}>Reference<SortIcon col="Reference" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Name")}>Name<SortIcon col="Name" /></th>
-                      <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("ARREAR")}>Arrear<SortIcon col="ARREAR" /></th>
-                      <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("AGE")}>Age<SortIcon col="AGE" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("C/Load")}>C/Load<SortIcon col="C/Load" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reporting Date")}>Reporting Date<SortIcon col="Reporting Date" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Method")}>Method<SortIcon col="Method" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground">Theft Pic</th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground">Media</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {sortedRecords.map((r, i) => (
-                      <tr
-                        key={i}
-                        onClick={() => setSelectedRecord(r)}
-                        className="cursor-pointer border-t border-border hover:bg-primary/10 transition-colors"
-                      >
-                        <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
-                        <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
-                        <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r.ARREAR ?? "—"}</td>
-                        <td className="px-2 py-1.5 text-muted-foreground text-right whitespace-nowrap">{r.AGE ?? "—"}</td>
-                      </tr>
-                    ))}
+                    {sortedRecords.map((r, i) => {
+                      const theftPic = r["Theft Pic"] || r["Theft_Pic"];
+                      const media = r.media || r.Media;
+                      return (
+                        <tr
+                          key={i}
+                          onClick={() => setSelectedRecord(r)}
+                          className="cursor-pointer border-t border-border hover:bg-primary/10 transition-colors"
+                        >
+                          <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r["C/Load"] ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r["Reporting Date"] ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r.Method ?? "—"}</td>
+                          <td className="px-2 py-1.5" onClick={(e) => e.stopPropagation()}>
+                            {theftPic ? (
+                              <a href={theftPic} target="_blank" rel="noopener noreferrer">
+                                <img src={theftPic} alt="theft" className="h-10 w-10 object-cover rounded" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+                              </a>
+                            ) : "—"}
+                          </td>
+                          <td className="px-2 py-1.5" onClick={(e) => e.stopPropagation()}>
+                            {media ? (
+                              <a href={media} target="_blank" rel="noopener noreferrer" className="text-primary underline">View</a>
+                            ) : "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
