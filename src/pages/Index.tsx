@@ -159,7 +159,7 @@ const Index = () => {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
-  const displayByColumn = useCallback(async (column: string, label: string) => {
+  const displayByColumn = useCallback(async (column: string, label: string, startDate?: string, endDate?: string) => {
     setLoading(true);
     setRecords([]);
     setSelectedRecord(null);
@@ -167,12 +167,14 @@ const Index = () => {
     let allData: Record<string, any>[] = [];
     let from = 0;
     while (true) {
-      const { data, error } = await supabase
+      let q = supabase
         .from(TABLE_NAME)
         .select("*")
         .not(column, "is", null)
-        .neq(column, "")
-        .range(from, from + pageSize - 1);
+        .neq(column, "");
+      if (startDate) q = q.gte(column, startDate);
+      if (endDate) q = q.lte(column, endDate);
+      const { data, error } = await q.range(from, from + pageSize - 1);
       if (error) {
         toast.error("Fetch failed: " + error.message);
         setLoading(false);
@@ -189,8 +191,8 @@ const Index = () => {
     setLoading(false);
   }, []);
 
-  const displayModified = useCallback(() => displayByColumn("payment", "recovery cases"), [displayByColumn]);
-  const displayTheft = useCallback(() => displayByColumn("Reporting Date", "theft cases"), [displayByColumn]);
+  const displayModified = useCallback(() => displayByColumn("Payment_Date", "recovery cases", recoveryStart, recoveryEnd), [displayByColumn, recoveryStart, recoveryEnd]);
+  const displayTheft = useCallback(() => displayByColumn("Reporting Date", "theft cases", theftStart, theftEnd), [displayByColumn, theftStart, theftEnd]);
 
   const downloadExcel = useCallback(async () => {
     toast.info("Fetching all records…");
