@@ -302,7 +302,7 @@ const Index = () => {
               <CardTitle className="text-sm text-primary font-semibold">Download Modified Records</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 space-y-3">
-              <ModifiedDataDownload />
+              <ModifiedDataDownload startDate={recoveryStart} endDate={recoveryEnd} onStartDateChange={setRecoveryStart} onEndDateChange={setRecoveryEnd} />
               <SummaryDialog />
               <Button variant="outline" size="sm" onClick={displayModified} className="w-full h-8 text-xs border-primary/30 hover:bg-primary/10 hover:text-primary">
                 Display Recovery Cases
