@@ -14,11 +14,20 @@ const BUCKET = "picture";
 
 interface Props {
   variant?: "recovery" | "theft";
+  startDate?: string;
+  endDate?: string;
+  onStartDateChange?: (v: string) => void;
+  onEndDateChange?: (v: string) => void;
 }
-const ModifiedDataDownload = ({ variant = "recovery" }: Props) => {
+const ModifiedDataDownload = ({ variant = "recovery", startDate: startDateProp, endDate: endDateProp, onStartDateChange, onEndDateChange }: Props) => {
   const isTheft = variant === "theft";
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const dateColumn = isTheft ? "Reporting Date" : "Payment_Date";
+  const [startDateLocal, setStartDateLocal] = useState("");
+  const [endDateLocal, setEndDateLocal] = useState("");
+  const startDate = startDateProp !== undefined ? startDateProp : startDateLocal;
+  const endDate = endDateProp !== undefined ? endDateProp : endDateLocal;
+  const setStartDate = (v: string) => { onStartDateChange ? onStartDateChange(v) : setStartDateLocal(v); };
+  const setEndDate = (v: string) => { onEndDateChange ? onEndDateChange(v) : setEndDateLocal(v); };
   const [downloading, setDownloading] = useState(false);
   const [progress, setProgress] = useState("");
   const [filters, setFilters] = useState<Filters>({});
