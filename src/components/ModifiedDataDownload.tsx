@@ -44,8 +44,11 @@ const ModifiedDataDownload = ({ variant = "recovery", startDate: startDateProp, 
         let query = supabase
           .from(TABLE_NAME)
           .select("*")
-          .not("payment", "is", null)
-          .neq("payment", "");
+          .not(dateColumn, "is", null)
+          .neq(dateColumn, "");
+
+        if (startDate) query = query.gte(dateColumn, startDate);
+        if (endDate) query = query.lte(dateColumn, endDate);
 
         // Apply filters
         Object.entries(filters).forEach(([key, vals]) => {
