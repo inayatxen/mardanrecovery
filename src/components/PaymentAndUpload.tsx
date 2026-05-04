@@ -24,6 +24,7 @@ const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 const PaymentAndUpload = ({ record, onUpdated }: Props) => {
   const [payment, setPayment] = useState(record.payment ?? "");
   const [paymentMode, setPaymentMode] = useState(record["payment mode"] ?? "");
+  const [paymentDate, setPaymentDate] = useState(record.Payment_Date ?? "");
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
