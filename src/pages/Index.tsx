@@ -163,6 +163,8 @@ const Index = () => {
     setLoading(true);
     setRecords([]);
     setSelectedRecord(null);
+    setSortKey(null);
+    setSortDir("asc");
     const pageSize = 1000;
     let allData: Record<string, any>[] = [];
     let from = 0;
