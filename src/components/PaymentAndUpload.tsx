@@ -11,8 +11,12 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Save, Upload, Image, ZoomIn, ZoomOut, X } from "lucide-react";
+import { Save, Upload, Image, ZoomIn, ZoomOut, X, Calendar as CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, parseISO, isValid } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface Props {
   record: Record<string, any>;
@@ -24,6 +28,7 @@ const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 const PaymentAndUpload = ({ record, onUpdated }: Props) => {
   const [payment, setPayment] = useState(record.payment ?? "");
   const [paymentMode, setPaymentMode] = useState(record["payment mode"] ?? "");
+  const [paymentDate, setPaymentDate] = useState(record.Payment_Date ?? "");
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -34,6 +39,7 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
   useEffect(() => {
     setPayment(record.payment ?? "");
     setPaymentMode(record["payment mode"] ?? "");
+    setPaymentDate(record.Payment_Date ?? "");
     setFile(null);
   }, [record.Reference]);
 
@@ -70,7 +76,7 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
     // Update payment
     const { error: dbError } = await supabase
       .from(TABLE_NAME)
-      .update({ payment, "payment mode": paymentMode })
+      .update({ payment, "payment mode": paymentMode, Payment_Date: paymentDate || null })
       .eq("Reference", record.Reference);
 
     if (dbError) {
@@ -125,6 +131,34 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
               <SelectItem value="Partial Payment">Partial Payment</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Payment Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !paymentDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {paymentDate && isValid(parseISO(paymentDate))
+                  ? format(parseISO(paymentDate), "PPP")
+                  : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={paymentDate && isValid(parseISO(paymentDate)) ? parseISO(paymentDate) : undefined}
+                onSelect={(d) => setPaymentDate(d ? format(d, "yyyy-MM-dd") : "")}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-1">
           <Label className="text-xs">Picture</Label>
