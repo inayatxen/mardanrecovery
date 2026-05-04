@@ -11,8 +11,12 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Save, Upload, Image, ZoomIn, ZoomOut, X } from "lucide-react";
+import { Save, Upload, Image, ZoomIn, ZoomOut, X, Calendar as CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, parseISO, isValid } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface Props {
   record: Record<string, any>;
