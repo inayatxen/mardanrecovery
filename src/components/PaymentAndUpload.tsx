@@ -133,6 +133,34 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
           </Select>
         </div>
         <div className="space-y-1">
+          <Label className="text-xs">Payment Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !paymentDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {paymentDate && isValid(parseISO(paymentDate))
+                  ? format(parseISO(paymentDate), "PPP")
+                  : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={paymentDate && isValid(parseISO(paymentDate)) ? parseISO(paymentDate) : undefined}
+                onSelect={(d) => setPaymentDate(d ? format(d, "yyyy-MM-dd") : "")}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="space-y-1">
           <Label className="text-xs">Picture</Label>
           <Input
             type="file"
