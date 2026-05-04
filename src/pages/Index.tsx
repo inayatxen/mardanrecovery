@@ -172,8 +172,7 @@ const Index = () => {
       let q = supabase
         .from(TABLE_NAME)
         .select("*")
-        .not(column, "is", null)
-        .neq(column, "");
+        .not(column, "is", null);
       if (startDate) q = q.gte(column, startDate);
       if (endDate) q = q.lte(column, endDate);
       const { data, error } = await q.range(from, from + pageSize - 1);
