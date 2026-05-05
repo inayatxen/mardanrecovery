@@ -253,7 +253,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="px-3 py-4 space-y-3 w-full mx-auto">
+      <main className="flex-1 px-3 py-4 space-y-3 w-full mx-auto">
         <Card className="shadow-md border-0 bg-card/80 backdrop-blur-sm">
           <CardContent className="pt-4 pb-3 space-y-3">
             <SearchBar onSearch={handleSearch} loading={loading} />
@@ -548,7 +548,7 @@ const Index = () => {
         )}
       </main>
 
-      <footer className="mt-6 py-4 text-center text-xs text-muted-foreground border-t border-border/50">
+      <footer className="mt-auto py-4 text-center text-xs text-muted-foreground border-t border-border/50">
         Designed By Engr. Inayatullah
       </footer>
     </div>
