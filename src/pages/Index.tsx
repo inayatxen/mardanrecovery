@@ -192,7 +192,7 @@ const Index = () => {
     setLoading(false);
   }, []);
 
-  const displayModified = useCallback(() => displayByColumn("Payment_Date", "recovery cases", recoveryStart, recoveryEnd), [displayByColumn, recoveryStart, recoveryEnd]);
+  const displayModified = useCallback(() => displayByColumn("payment", "recovery cases", recoveryStart, recoveryEnd), [displayByColumn, recoveryStart, recoveryEnd]);
   const displayTheft = useCallback(() => displayByColumn("Reporting Date", "theft cases", theftStart, theftEnd), [displayByColumn, theftStart, theftEnd]);
 
   const downloadExcel = useCallback(async () => {
