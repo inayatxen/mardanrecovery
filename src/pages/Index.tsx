@@ -555,6 +555,15 @@ const Index = () => {
                 <PaymentAndUpload record={selectedRecord} onUpdated={refreshRecord} />
               </CardContent>
             </Card>
+
+            <Card id="theft-update-section" className="shadow-md border-0 bg-card/80 backdrop-blur-sm">
+              <CardHeader className="pb-2 px-4 pt-4">
+                <CardTitle className="text-sm text-primary font-semibold">Update Theft</CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <TheftUpdate record={selectedRecord} onUpdated={refreshRecord} />
+              </CardContent>
+            </Card>
           </>
         )}
       </main>
