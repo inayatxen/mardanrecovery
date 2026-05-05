@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Download, ArrowLeft, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import ModifiedDataDownload from "@/components/ModifiedDataDownload";
+import DisplayedDataDownload from "@/components/DisplayedDataDownload";
 import SummaryDialog from "@/components/SummaryDialog";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
@@ -379,6 +380,9 @@ const Index = () => {
                   </tbody>
                 </table>
               </div>
+              <div className="mt-3">
+                <DisplayedDataDownload records={sortedRecords} title="Recovery Cases" />
+              </div>
             </CardContent>
           </Card>
         )}
@@ -436,6 +440,9 @@ const Index = () => {
                     })}
                   </tbody>
                 </table>
+              </div>
+              <div className="mt-3">
+                <DisplayedDataDownload records={sortedRecords} title="Theft Cases" />
               </div>
             </CardContent>
           </Card>
