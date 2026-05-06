@@ -34,6 +34,7 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
   const [saving, setSaving] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const camRef = useRef<HTMLInputElement>(null);
 
   // Reset when record changes
   useEffect(() => {
