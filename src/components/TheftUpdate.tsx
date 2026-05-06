@@ -35,6 +35,25 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
   const [saving, setSaving] = useState(false);
   const theftCamRef = useRef<HTMLInputElement>(null);
   const mediaCamRef = useRef<HTMLInputElement>(null);
+  const [theftPreview, setTheftPreview] = useState<string | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [zoomSrc, setZoomSrc] = useState<string | null>(null);
+  const [zoomKind, setZoomKind] = useState<"image" | "video">("image");
+  const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    if (!theftPicFile) { setTheftPreview(null); return; }
+    const url = URL.createObjectURL(theftPicFile);
+    setTheftPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [theftPicFile]);
+
+  useEffect(() => {
+    if (!mediaFile) { setMediaPreview(null); return; }
+    const url = URL.createObjectURL(mediaFile);
+    setMediaPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [mediaFile]);
 
   useEffect(() => {
     setCLoad(record["C/Load"] ?? "");
