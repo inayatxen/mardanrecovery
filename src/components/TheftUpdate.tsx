@@ -207,13 +207,22 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
           </div>
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Record</Label>
-            <Input
+            <input
+              ref={mediaCamRef}
               type="file"
-              accept="image/*,video/*"
+              accept="video/*"
               capture="environment"
               onChange={(e) => setMediaFile(e.target.files?.[0] ?? null)}
-              className="text-sm"
+              className="hidden"
             />
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => mediaCamRef.current?.click()}
+            >
+              <Video className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         {mediaFile && (
