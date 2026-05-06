@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Save, Upload, Image, ZoomIn, ZoomOut, X, Calendar as CalendarIcon } from "lucide-react";
+import { Save, Upload, Image, ZoomIn, ZoomOut, X, Calendar as CalendarIcon, Camera } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,6 +34,7 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
   const [saving, setSaving] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const camRef = useRef<HTMLInputElement>(null);
 
   // Reset when record changes
   useEffect(() => {
@@ -185,13 +186,22 @@ const PaymentAndUpload = ({ record, onUpdated }: Props) => {
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] text-muted-foreground">Take Photo</Label>
-              <Input
+              <input
+                ref={camRef}
                 type="file"
                 accept="image/*"
                 capture="environment"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="text-sm"
+                className="hidden"
               />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => camRef.current?.click()}
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
             </div>
           </div>
           {file && (
