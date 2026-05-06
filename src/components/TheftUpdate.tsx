@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Save, Calendar as CalendarIcon } from "lucide-react";
+import { Save, Calendar as CalendarIcon, Camera, Video } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, parseISO, isValid } from "date-fns";
@@ -32,6 +32,8 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
   const [theftPicFile, setTheftPicFile] = useState<File | null>(null);
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const theftCamRef = useRef<HTMLInputElement>(null);
+  const mediaCamRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setCLoad(record["C/Load"] ?? "");
@@ -168,13 +170,22 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
           </div>
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Take Photo</Label>
-            <Input
+            <input
+              ref={theftCamRef}
               type="file"
               accept="image/*"
               capture="environment"
               onChange={(e) => setTheftPicFile(e.target.files?.[0] ?? null)}
-              className="text-sm"
+              className="hidden"
             />
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => theftCamRef.current?.click()}
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         {theftPicFile && (
@@ -196,13 +207,22 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
           </div>
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Record</Label>
-            <Input
+            <input
+              ref={mediaCamRef}
               type="file"
-              accept="image/*,video/*"
+              accept="video/*"
               capture="environment"
               onChange={(e) => setMediaFile(e.target.files?.[0] ?? null)}
-              className="text-sm"
+              className="hidden"
             />
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => mediaCamRef.current?.click()}
+            >
+              <Video className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         {mediaFile && (
