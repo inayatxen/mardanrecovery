@@ -168,13 +168,22 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
           </div>
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Take Photo</Label>
-            <Input
+            <input
+              ref={theftCamRef}
               type="file"
               accept="image/*"
               capture="environment"
               onChange={(e) => setTheftPicFile(e.target.files?.[0] ?? null)}
-              className="text-sm"
+              className="hidden"
             />
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => theftCamRef.current?.click()}
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         {theftPicFile && (
