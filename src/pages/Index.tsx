@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import pescoLogo from "@/assets/pesco-logo.png";
 import { supabase } from "@/lib/supabase";
 import SearchBar from "@/components/SearchBar";
@@ -8,7 +9,7 @@ import PaymentAndUpload from "@/components/PaymentAndUpload";
 import TheftUpdate from "@/components/TheftUpdate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Download, ArrowLeft, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { MapPin, Download, ArrowLeft, ArrowUpDown, ArrowUp, ArrowDown, LogOut } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import ModifiedDataDownload from "@/components/ModifiedDataDownload";
 import DisplayedDataDownload from "@/components/DisplayedDataDownload";
@@ -21,6 +22,7 @@ const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 type View = "home" | "arrears" | "recovery" | "theft";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [view, setView] = useState<View>("home");
   const [records, setRecords] = useState<Record<string, any>[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<Record<string, any> | null>(null);
@@ -32,6 +34,12 @@ const Index = () => {
   const [recoveryEnd, setRecoveryEnd] = useState("");
   const [theftStart, setTheftStart] = useState("");
   const [theftEnd, setTheftEnd] = useState("");
+
+  const handleLogout = useCallback(async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out successfully");
+    navigate("/auth");
+  }, [navigate]);
 
   const toggleSort = useCallback((key: string) => {
     setSortKey((prev) => {
@@ -238,19 +246,30 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background transition-colors duration-300">
       <header className="header-gradient sticky top-0 z-10 shadow-lg">
-        <div className="px-4 py-4 flex flex-col items-center text-center max-w-2xl mx-auto">
-          <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur-sm p-1 mb-2 shadow-md">
-            <img src={pescoLogo} alt="PESCO Logo" className="h-full w-full rounded-full object-contain" />
-          </div>
-          <h1 className="text-lg font-bold text-white drop-shadow-sm">
-            PESCO MARDAN CIRCLE RECOVERY APPLICATION
-          </h1>
-          <div className="mt-2">
+        <div className="px-4 py-4 relative">
+          <div className="absolute top-4 right-4 flex gap-2">
             <ThemeToggle />
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 h-8 w-8 p-0"
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
-          <p className="text-xs text-white/80 mt-1">
-            Search by Reference or filter by columns
-          </p>
+          <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
+            <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur-sm p-1 mb-2 shadow-md">
+              <img src={pescoLogo} alt="PESCO Logo" className="h-full w-full rounded-full object-contain" />
+            </div>
+            <h1 className="text-lg font-bold text-white drop-shadow-sm">
+              PESCO MARDAN CIRCLE RECOVERY APPLICATION
+            </h1>
+            <p className="text-xs text-white/80 mt-1">
+              Search by Reference or filter by columns
+            </p>
+          </div>
         </div>
       </header>
 
