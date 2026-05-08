@@ -438,7 +438,7 @@ const Index = () => {
             <CardContent className="px-4 pb-4">
               <div className="max-h-96 overflow-auto rounded-md border border-border">
                 <table className="w-full text-xs">
-                  <thead className="bg-muted/70 sticky top-0">
+                  <thead className="bg-muted/70 sticky top-0 divide-x divide-border">
                     <tr className="text-left">
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reference")}>Reference<SortIcon col="Reference" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Name")}>Name<SortIcon col="Name" /></th>
@@ -450,7 +450,7 @@ const Index = () => {
                       <th className="px-2 py-1.5 font-semibold text-foreground">Media</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border">
                     {sortedRecords.map((r, i) => {
                       const theftPic = r["Theft Pic"] || r["Theft_Pic"];
                       const media = r.media || r.Media;
@@ -458,7 +458,7 @@ const Index = () => {
                         <tr
                           key={i}
                           onClick={() => setSelectedRecord(r)}
-                          className="cursor-pointer border-t border-border hover:bg-primary/10 transition-colors"
+                          className="cursor-pointer divide-x divide-border hover:bg-primary/10 transition-colors"
                         >
                           <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
                           <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
