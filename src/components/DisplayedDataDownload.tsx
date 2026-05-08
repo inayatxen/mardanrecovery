@@ -43,9 +43,11 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
     setProgress("Preparing download...");
 
     try {
-      const zip = new JSZip();
-      const picturesFolder = zip.folder("Pictures")!;
-      const mediaFolder = zip.folder("Media")!;
+      const timestamp = new Date().toISOString().split("T")[0];
+      const folderName = `${title.replace(/\s+/g, "_")}_${timestamp}`;
+      const mainFolder = zip.folder(folderName)!;
+      const picturesFolder = mainFolder.folder("Pictures")!;
+      const mediaFolder = mainFolder.folder("Media")!;
 
       // Download images and build rows
       const rows: Record<string, any>[] = [];
@@ -124,11 +126,8 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
           "Name of Reporting Officer": r["Name of Reporting officer"] || "",
           "Reporting Date": r["Reporting Date"] || "",
           Method: r.Method || "",
-          "Theft Pic File": picLink,
           "Theft Pic Link": theftPic,
-          "Media File": mediaLink,
           "Media Link": media,
-          "View/Play": media || theftPic ? "✓" : "",
         });
       }
 
@@ -143,18 +142,6 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
         headers.push(cell ? String(cell.v) : "");
       }
 
-      // Make Theft Pic File column a relative hyperlink
-      const picFileCol = headers.indexOf("Theft Pic File");
-      if (picFileCol >= 0) {
-        for (let r = 1; r <= range.e.r; r++) {
-          const addr = XLSX.utils.encode_cell({ r, c: picFileCol });
-          const cell = ws[addr];
-          if (cell && cell.v) {
-            cell.l = { Target: cell.v, Tooltip: "Open Theft Picture" };
-          }
-        }
-      }
-
       // Make Theft Pic Link column a web hyperlink
       const picLinkCol = headers.indexOf("Theft Pic Link");
       if (picLinkCol >= 0) {
@@ -164,18 +151,6 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
           if (cell && cell.v) {
             cell.l = { Target: cell.v, Tooltip: "View Theft Picture Online" };
             cell.v = "View Pic";
-          }
-        }
-      }
-
-      // Make Media File column a relative hyperlink
-      const mediaFileCol = headers.indexOf("Media File");
-      if (mediaFileCol >= 0) {
-        for (let r = 1; r <= range.e.r; r++) {
-          const addr = XLSX.utils.encode_cell({ r, c: mediaFileCol });
-          const cell = ws[addr];
-          if (cell && cell.v) {
-            cell.l = { Target: cell.v, Tooltip: "Play/View Local Media" };
           }
         }
       }
@@ -204,20 +179,16 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
         { wch: 20 }, // Name of Reporting Officer
         { wch: 15 }, // Reporting Date
         { wch: 15 }, // Method
-        { wch: 12 }, // Theft Pic File
         { wch: 12 }, // Theft Pic Link
-        { wch: 12 }, // Media File
         { wch: 12 }, // Media Link
-        { wch: 10 }, // View/Play
       ];
 
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Theft Cases");
 
       const xlsxData = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const timestamp = new Date().toISOString().split("T")[0];
       const excelName = `${title.replace(/\s+/g, "_")}_${timestamp}.xlsx`;
-      zip.file(excelName, xlsxData);
+      mainFolder.file(excelName, xlsxData);
 
       setProgress("Generating ZIP...");
       const zipBlob = await zip.generateAsync({ type: "blob" });
