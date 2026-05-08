@@ -441,7 +441,10 @@ const Index = () => {
                   <thead className="bg-muted/70 sticky top-0 divide-x divide-border">
                     <tr className="text-left">
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reference")}>Reference<SortIcon col="Reference" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Sub Division")}>Sub Division<SortIcon col="Sub Division" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Name")}>Name<SortIcon col="Name" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Father")}>Father<SortIcon col="Father" /></th>
+                      <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("S_Load")}>S_Load<SortIcon col="S_Load" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground text-right cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("C/Load")}>C/Load<SortIcon col="C/Load" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Name of Reporting officer")}>Name of Reporting Officer<SortIcon col="Name of Reporting officer" /></th>
                       <th className="px-2 py-1.5 font-semibold text-foreground cursor-pointer select-none hover:bg-muted" onClick={() => toggleSort("Reporting Date")}>Reporting Date<SortIcon col="Reporting Date" /></th>
@@ -461,7 +464,10 @@ const Index = () => {
                           className="cursor-pointer divide-x divide-border hover:bg-primary/10 transition-colors"
                         >
                           <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">{r.Reference}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r["Sub Division"] ?? "—"}</td>
                           <td className="px-2 py-1.5 text-muted-foreground truncate max-w-[140px]">{r.Name ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r.Father ?? "—"}</td>
+                          <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r.S_Load ?? "—"}</td>
                           <td className="px-2 py-1.5 text-foreground text-right whitespace-nowrap">{r["C/Load"] ?? "—"}</td>
                           <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r["Name of Reporting officer"] ?? "—"}</td>
                           <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">{r["Reporting Date"] ?? "—"}</td>
