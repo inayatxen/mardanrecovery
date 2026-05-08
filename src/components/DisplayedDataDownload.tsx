@@ -45,6 +45,7 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
     try {
       const zip = new JSZip();
       const picturesFolder = zip.folder("Pictures")!;
+      const mediaFolder = zip.folder("Media")!;
 
       // Download images and build rows
       const rows: Record<string, any>[] = [];
@@ -61,6 +62,8 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
 
         let picFileName = "";
         let picLink = "";
+        let mediaFileName = "";
+        let mediaLink = "";
 
         // Download Theft Pic if available
         if (theftPic) {
@@ -79,6 +82,38 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
           }
         }
 
+        // Download Media file if available
+        if (media) {
+          try {
+            const resp = await fetch(media);
+            if (resp.ok) {
+              const blob = await resp.blob();
+              // Try to extract extension from URL
+              const urlPath = new URL(media).pathname;
+              let ext = ".mp4"; // default
+              
+              if (media.includes(".mp4")) ext = ".mp4";
+              else if (media.includes(".mov")) ext = ".mov";
+              else if (media.includes(".avi")) ext = ".avi";
+              else if (media.includes(".mkv")) ext = ".mkv";
+              else if (media.includes(".webm")) ext = ".webm";
+              else if (media.includes(".wav")) ext = ".wav";
+              else if (media.includes(".mp3")) ext = ".mp3";
+              else {
+                const lastDot = urlPath.lastIndexOf(".");
+                if (lastDot > 0) ext = urlPath.substring(lastDot);
+              }
+              
+              mediaFileName = `${ref}_media${ext}`;
+              mediaFolder.file(mediaFileName, blob);
+              mediaLink = `Media/${mediaFileName}`;
+              mediaCount++;
+            }
+          } catch {
+            // skip failed media
+          }
+        }
+
         rows.push({
           Reference: r.Reference || "",
           "Sub Division": r["Sub Division"] || "",
@@ -91,11 +126,10 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
           Method: r.Method || "",
           "Theft Pic File": picLink,
           "Theft Pic Link": theftPic,
+          "Media File": mediaLink,
           "Media Link": media,
           "View/Play": media || theftPic ? "✓" : "",
         });
-
-        if (media) mediaCount++;
       }
 
       setProgress("Creating Excel file...");
@@ -134,14 +168,26 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
         }
       }
 
-      // Make Media Link column a web hyperlink
-      const mediaCol = headers.indexOf("Media Link");
-      if (mediaCol >= 0) {
+      // Make Media File column a relative hyperlink
+      const mediaFileCol = headers.indexOf("Media File");
+      if (mediaFileCol >= 0) {
         for (let r = 1; r <= range.e.r; r++) {
-          const addr = XLSX.utils.encode_cell({ r, c: mediaCol });
+          const addr = XLSX.utils.encode_cell({ r, c: mediaFileCol });
           const cell = ws[addr];
           if (cell && cell.v) {
-            cell.l = { Target: cell.v, Tooltip: "View/Play Media" };
+            cell.l = { Target: cell.v, Tooltip: "Play/View Local Media" };
+          }
+        }
+      }
+
+      // Make Media Link column a web hyperlink
+      const mediaLinkCol = headers.indexOf("Media Link");
+      if (mediaLinkCol >= 0) {
+        for (let r = 1; r <= range.e.r; r++) {
+          const addr = XLSX.utils.encode_cell({ r, c: mediaLinkCol });
+          const cell = ws[addr];
+          if (cell && cell.v) {
+            cell.l = { Target: cell.v, Tooltip: "Play/View Media Online" };
             cell.v = "Play/View";
           }
         }
@@ -160,6 +206,7 @@ const DisplayedDataDownload = ({ records, title }: Props) => {
         { wch: 15 }, // Method
         { wch: 12 }, // Theft Pic File
         { wch: 12 }, // Theft Pic Link
+        { wch: 12 }, // Media File
         { wch: 12 }, // Media Link
         { wch: 10 }, // View/Play
       ];
