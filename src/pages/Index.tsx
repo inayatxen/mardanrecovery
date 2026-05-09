@@ -213,7 +213,7 @@ const Index = () => {
   const displayTheft = useCallback(() => displayByColumn("Reporting Date", "theft cases", theftStart, theftEnd), [displayByColumn, theftStart, theftEnd]);
 
   const downloadExcel = useCallback(async () => {
-    toast.info("Fetching all records…");
+    toast.info("Fetching filtered records…");
 
     const keys = Object.keys(filters);
     const pageSize = 1000;
@@ -238,17 +238,37 @@ const Index = () => {
       from += pageSize;
     }
 
+    if (minArrear > 0) {
+      allData = allData.filter((record) => {
+        const arrear = parseFloat(String(record.ARREAR || "0").replace(/,/g, "")) || 0;
+        return arrear >= minArrear;
+      });
+    }
+
     if (allData.length === 0) {
-      toast.error("No records to download");
+      toast.error("No records match the selected filters");
       return;
     }
 
     const ws = XLSX.utils.json_to_sheet(allData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Arrears");
-    XLSX.writeFile(wb, "PESCO_Arrears_Data.xlsx");
-    toast.success(`Downloaded ${allData.length} records`);
-  }, [filters]);
+    XLSX.writeFile(wb, "PESCO_Arrears_Filtered.xlsx");
+    toast.success(`Downloaded ${allData.length} filtered records`);
+  }, [filters, minArrear]);
+
+  const downloadResults = useCallback(() => {
+    if (records.length === 0) {
+      toast.error("No records to download");
+      return;
+    }
+
+    const ws = XLSX.utils.json_to_sheet(records);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Results");
+    XLSX.writeFile(wb, "PESCO_Results.xlsx");
+    toast.success(`Downloaded ${records.length} displayed records`);
+  }, [records]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background transition-colors duration-300">
@@ -511,7 +531,7 @@ const Index = () => {
                 <CardTitle className="text-sm text-primary font-semibold">
                   Results ({records.length})
                 </CardTitle>
-                <Button variant="outline" size="sm" onClick={downloadExcel} className="h-8 text-xs border-primary/30 hover:bg-primary/10">
+                <Button variant="outline" size="sm" onClick={downloadResults} className="h-8 text-xs border-primary/30 hover:bg-primary/10">
                   <Download className="mr-1 h-3.5 w-3.5" />
                   Download Excel
                 </Button>
