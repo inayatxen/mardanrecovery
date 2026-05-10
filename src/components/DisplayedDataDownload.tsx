@@ -156,11 +156,17 @@ const DisplayedDataDownload = ({ records, title, isRecovery = false }: Props) =>
           rows.push({
             Reference: r.Reference || "",
             "Sub Division": r["Sub Division"] || "",
-            Name: r.Name || "",
+            Batch: r.Batch || "",
             Tariff: r.Tariff || "",
+            Name: r.Name || "",
+            Father: r.Father || "",
+            Address: r.Address || "",
             ARREAR: r.ARREAR || "",
+            AGE: r.AGE || "",
+            Status: r.Status || "",
+            payment: r.payment || "",
             Payment_Date: r.Payment_Date || "",
-            Payment_Mode: r.Payment_Mode || "",
+            "payment mode": r["payment mode"] || r.Payment_Mode || r["Payment Mode"] || "",
             "Picture File": picLink || "",
           });
         } else {
@@ -208,11 +214,17 @@ const DisplayedDataDownload = ({ records, title, isRecovery = false }: Props) =>
         ws["!cols"] = [
           { wch: 12 }, // Reference
           { wch: 15 }, // Sub Division
-          { wch: 20 }, // Name
+          { wch: 12 }, // Batch
           { wch: 12 }, // Tariff
+          { wch: 20 }, // Name
+          { wch: 20 }, // Father
+          { wch: 25 }, // Address
           { wch: 12 }, // ARREAR
+          { wch: 8 }, // AGE
+          { wch: 12 }, // Status
+          { wch: 12 }, // payment
           { wch: 15 }, // Payment_Date
-          { wch: 15 }, // Payment_Mode
+          { wch: 15 }, // payment mode
           { wch: 12 }, // Picture File
         ];
       } else {

@@ -130,9 +130,20 @@ const ModifiedDataDownload = ({ variant = "recovery", startDate: startDateProp, 
         const publicUrl = urlData?.publicUrl || "";
 
         rows.push({
-          ...r,
+          Reference: r.Reference || "",
+          "Sub Division": r["Sub Division"] || "",
+          Batch: r.Batch || "",
+          Tariff: r.Tariff || "",
+          Name: r.Name || "",
+          Father: r.Father || "",
+          Address: r.Address || "",
+          ARREAR: r.ARREAR || "",
+          AGE: r.AGE || "",
+          Status: r.Status || "",
+          payment: r.payment || "",
+          Payment_Date: r.Payment_Date || "",
+          "payment mode": r["payment mode"] || r.Payment_Mode || r["Payment Mode"] || "",
           "Picture File": imageDownloaded && fileName ? `Pictures/${fileName}` : "",
-          "Picture Link": publicUrl,
         });
       }
 
@@ -155,18 +166,6 @@ const ModifiedDataDownload = ({ variant = "recovery", startDate: startDateProp, 
           const cell = ws[addr];
           if (cell && cell.v) {
             cell.l = { Target: cell.v, Tooltip: "Open Picture" };
-          }
-        }
-      }
-
-      // Make Picture Link column a web hyperlink
-      const linkCol = headers.indexOf("Picture Link");
-      if (linkCol >= 0) {
-        for (let r = 1; r <= range.e.r; r++) {
-          const addr = XLSX.utils.encode_cell({ r, c: linkCol });
-          const cell = ws[addr];
-          if (cell && cell.v) {
-            cell.l = { Target: cell.v, Tooltip: "Open Online" };
           }
         }
       }
