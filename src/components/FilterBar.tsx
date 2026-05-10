@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
-import { FILTER_OPTIONS } from "@/lib/filterOptions";
+
+const TABLE_NAME = "PESCO ARREAR LIST MARDAN";
 
 const filterColumns = [
   { key: "Sub Division", label: "Sub Division" },
@@ -19,15 +19,56 @@ export type Filters = Record<string, string[]>;
 interface FilterBarProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
-  minArrear?: number;
-  onMinArrearChange?: (value: number) => void;
 }
 
-const FilterBar = ({ filters, onFiltersChange, minArrear = 0, onMinArrearChange }: FilterBarProps) => {
+const selectCols = filterColumns
+  .map((c) => (c.key.includes(" ") ? `"${c.key}"` : c.key))
+  .join(",");
+
+const FilterBar = ({ filters, onFiltersChange }: FilterBarProps) => {
+  const [allRows, setAllRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
+  useEffect(() => {
+    const fetchAll = async () => {
+      setLoading(true);
+      let rows: any[] = [];
+      let from = 0;
+      const pageSize = 1000;
+      while (true) {
+        const { data: page } = await supabase
+          .from(TABLE_NAME)
+          .select(selectCols)
+          .range(from, from + pageSize - 1);
+        if (!page || page.length === 0) break;
+        rows = rows.concat(page);
+        if (page.length < pageSize) break;
+        from += pageSize;
+      }
+      setAllRows(rows);
+      setLoading(false);
+    };
+    fetchAll();
+  }, []);
+
+  // Compute options per column, applying all OTHER active filters (cascading)
   const getOptionsFor = (colKey: string): string[] => {
-    return FILTER_OPTIONS[colKey as keyof typeof FILTER_OPTIONS] || [];
+    const filtered = allRows.filter((row) =>
+      Object.entries(filters).every(([k, vals]) => {
+        if (k === colKey) return true; // exclude self
+        if (!vals || vals.length === 0) return true;
+        return vals.includes(String(row[k]));
+      })
+    );
+    const unique = [
+      ...new Set(
+        filtered
+          .map((r) => (r[colKey] == null ? "" : String(r[colKey])))
+          .filter(Boolean)
+      ),
+    ].sort();
+    return unique;
   };
 
   const toggleValue = (key: string, value: string) => {
@@ -45,29 +86,12 @@ const FilterBar = ({ filters, onFiltersChange, minArrear = 0, onMinArrearChange 
     onFiltersChange(newFilters);
   };
 
-  const toggleAllValues = (key: string) => {
-    const items = getOptionsFor(key);
-    const current = filters[key] || [];
-    const allSelected = current.length === items.length;
-
-    const newFilters = { ...filters };
-    if (allSelected) {
-      delete newFilters[key];
-    } else {
-      newFilters[key] = items;
-    }
-    onFiltersChange(newFilters);
-  };
-
   const toggleExpand = (key: string) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const clearAll = () => {
-    onFiltersChange({});
-    if (onMinArrearChange) onMinArrearChange(0);
-  };
-  const hasFilters = Object.keys(filters).length > 0 || minArrear > 0;
+  const clearAll = () => onFiltersChange({});
+  const hasFilters = Object.keys(filters).length > 0;
 
   return (
     <div className="space-y-2">
@@ -84,27 +108,11 @@ const FilterBar = ({ filters, onFiltersChange, minArrear = 0, onMinArrearChange 
         )}
       </div>
 
-      <div className="space-y-2">
-        <div className="border border-border rounded-md px-3 py-2">
-          <Label className="text-xs font-medium text-foreground mb-1 block">Minimum Arrear</Label>
-          <Input
-            type="number"
-            placeholder="Enter minimum amount"
-            value={minArrear}
-            onChange={(e) => {
-              const val = e.target.value ? parseInt(e.target.value) : 0;
-              if (onMinArrearChange) onMinArrearChange(val);
-            }}
-            className="text-xs h-8"
-          />
-        </div>
-      </div>
-
       <div className="space-y-1">
         {filterColumns.map((col) => {
           const isOpen = expanded[col.key] || false;
           const selected = filters[col.key] || [];
-          const items = getOptionsFor(col.key);
+          const items = loading ? [] : getOptionsFor(col.key);
 
           return (
             <div key={col.key} className="border border-border rounded-md">
@@ -127,32 +135,24 @@ const FilterBar = ({ filters, onFiltersChange, minArrear = 0, onMinArrearChange 
 
               {isOpen && (
                 <div className="px-3 pb-2 max-h-36 overflow-y-auto space-y-1">
-                  {items.length === 0 ? (
+                  {loading ? (
+                    <p className="text-xs text-muted-foreground py-1">Loading...</p>
+                  ) : items.length === 0 ? (
                     <p className="text-xs text-muted-foreground py-1">No options</p>
                   ) : (
-                    <>
-                      <label className="flex items-center gap-2 text-xs cursor-pointer py-0.5 border-b pb-1">
+                    items.map((opt) => (
+                      <label
+                        key={opt}
+                        className="flex items-center gap-2 text-xs cursor-pointer py-0.5"
+                      >
                         <Checkbox
-                          checked={selected.length === items.length && items.length > 0}
-                          onCheckedChange={() => toggleAllValues(col.key)}
+                          checked={selected.includes(opt)}
+                          onCheckedChange={() => toggleValue(col.key, opt)}
                           className="h-3.5 w-3.5"
                         />
-                        <span className="text-foreground font-semibold">All</span>
+                        <span className="text-foreground truncate">{opt}</span>
                       </label>
-                      {items.map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-2 text-xs cursor-pointer py-0.5"
-                        >
-                          <Checkbox
-                            checked={selected.includes(opt)}
-                            onCheckedChange={() => toggleValue(col.key, opt)}
-                            className="h-3.5 w-3.5"
-                          />
-                          <span className="text-foreground truncate">{opt}</span>
-                        </label>
-                      ))}
-                    </>
+                    ))
                   )}
                 </div>
               )}

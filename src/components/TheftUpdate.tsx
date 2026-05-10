@@ -72,10 +72,6 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
     return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   };
 
-  const isReportingDateFilledInDb = !!record["Reporting Date"];
-  const areTheftFieldsFilled = !!(cLoad && method && reportingDate && officer);
-  const isTheftButtonDisabled = isReportingDateFilledInDb || !areTheftFieldsFilled;
-
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -313,14 +309,9 @@ const TheftUpdate = ({ record, onUpdated }: Props) => {
         </DialogContent>
       </Dialog>
 
-      <Button
-        onClick={handleSave}
-        disabled={saving || isTheftButtonDisabled}
-        className="w-full"
-        title={isReportingDateFilledInDb ? "Reporting Date already filled in database" : !areTheftFieldsFilled ? "Please fill all theft fields" : ""}
-      >
+      <Button onClick={handleSave} disabled={saving} className="w-full">
         <Save className="mr-2 h-4 w-4" />
-        {saving ? "Saving..." : isReportingDateFilledInDb ? "Theft Already Saved" : "Save Theft Details"}
+        {saving ? "Saving..." : "Save Theft Details"}
       </Button>
     </div>
   );
