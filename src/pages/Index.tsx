@@ -284,6 +284,24 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-background transition-colors duration-300">
       <header className="header-gradient sticky top-0 z-10 shadow-lg">
         <div className="px-4 py-4 relative">
+          <div className="absolute top-4 left-4">
+            {view !== "home" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setView("home");
+                  setRecords([]);
+                  setSelectedRecord(null);
+                  setFilters({});
+                  setSortKey(null);
+                }}
+                className="text-white hover:bg-white/20 h-8 px-2 text-xs"
+              >
+                <ArrowLeft className="mr-1 h-3.5 w-3.5" /> Back
+              </Button>
+            )}
+          </div>
           <div className="absolute top-4 right-4 flex gap-2">
             <ThemeToggle />
             <Button
@@ -344,22 +362,6 @@ const Index = () => {
           </div>
         )}
 
-        {view !== "home" && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setView("home");
-              setRecords([]);
-              setSelectedRecord(null);
-              setFilters({});
-              setSortKey(null);
-            }}
-            className="h-8 text-xs border-primary/30 hover:bg-primary/10 hover:text-primary"
-          >
-            <ArrowLeft className="mr-1 h-3.5 w-3.5" /> Back to Home
-          </Button>
-        )}
 
         {view === "arrears" && !selectedRecord && (
           <Card className="shadow-md border-0 bg-card/80 backdrop-blur-sm">
